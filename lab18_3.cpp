@@ -7,8 +7,11 @@
 
 using namespace std;
 
-struct student{
-
+struct student{  //true
+	string name;
+	int id;
+	char gender;
+	float gpa;
     //Define struct student with four member (name ,id , gender, gpa);
     
 };
@@ -20,7 +23,7 @@ struct course{
 	vector<student *> student_list;
 };
 
-student * findstudent(vector<student> allstudents,int key){ //There is something wrong in this line.
+student * findstudent(vector<student> &allstudents,int key){ //There is something wrong in this line.   true &allstudents
 	for(unsigned int i = 0; i < allstudents.size(); i++){
 		if(allstudents[i].id  == key) return &allstudents[i];
 	}
@@ -60,16 +63,19 @@ int main(){
 	vector<course> allcourses;
 	
 	string textline;
-	
 	while(getline(student_file,textline)){
 		student s; 
-		
-		//Use sscanf() to split the values in textline and assign those values to the members of struct s;
+
+		char name[50]; //
+		sscanf(textline.c_str(),"%[^,],%d,%c,%f" , name, &s.id, &s.gender, &s.gpa); // string ใช้ไม่ได้ เปลี่ยนเป็น char[50] มันไม่ใช่ค่าใส่ค่า 
+		s.name = name;   //ให้รู้ค่าทีหลังได้
+
+
 
 		allstudents.push_back(s); 		
 	}
 	
-	int state = 1;
+int state = 1;
 	while(getline(course_file,textline)){
 		if(state == 1){
 			course c;
@@ -83,16 +89,19 @@ int main(){
 			if(textline == "> Students"){
 				state = 3;
 			}else{
-			
+		
+			 allcourses.back().lecture_list.push_back(textline);  //allcourse lecture push
 			    //Append (push_back) textline to lecture_list[] of the recently added course in allcourses[];
-			    
+			    //allcourses.back() is used to access the last element (the most recently added element)
+				//in the allcourses vector. It returns a reference to this last element. Then, student_list.push_back(p)
+				// is called on this last element to add a new element to the student_list vector.
 			}			
 		}else{
 			if(textline == "---------------------------------------"){
 				state = 1;
 			}else{
 				student *p = findstudent(allstudents,atof(textline.c_str()));
-				
+ 				allcourses.back().student_list.push_back(p);
 				//Append (push_back) p to student_list of the recently added course in allcourses[];
 				
 			}
